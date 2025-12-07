@@ -2,7 +2,7 @@ import { DocumentType, types } from '@typegoose/typegoose';
 import { UserEntity } from './user.entity.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UserService } from './user.service.interface.js';
-import { Component } from '../../../types/index.js';
+import { Component } from '../../types/index.js';
 import { inject, injectable } from 'inversify';
 import { Logger } from '../../libs/logger/index.js';
 
@@ -34,5 +34,13 @@ export class DefaultUserService implements UserService {
     }
 
     return this.create(dto, salt);
+  }
+
+  public async updateAvatar(userId: string, avatarPath: string) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { avatar: avatarPath },
+      { new: true }
+    ).exec();
   }
 }

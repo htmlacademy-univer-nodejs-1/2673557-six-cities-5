@@ -1,29 +1,21 @@
 import { validate } from 'class-validator';
 import { Request, Response, NextFunction } from 'express';
-import { Middleware } from './middleware.interface';
+import { Middleware } from './middleware.interface.js';
+import { StatusCodes } from 'http-status-codes';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 
-export class ValidateDtoMiddleware<T extends object> implements Middleware {
-  constructor(private readonly dtoClass: new () => T) {}
+export class ValidateDtoMiddleware implements Middleware {
+  constructor(private dto: ClassConstructor<object>) {}
 
-  public async execute(req: Request, res: Response, next: NextFunction) {
-    const dtoObject = new this.dtoClass();
-
-    Object.assign(dtoObject, req.body);
-
-    (dtoObject as any).offerId = req.params.offerId;
-    (dtoObject as any).userId = req.user?.id ?? 'anonymous';
-
-    const errors = await validate(dtoObject, {
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    });
+  public async execute({ body }: Request, res: Response, next: NextFunction): Promise<void> {
+    const dtoInstance = plainToInstance(this.dto, body);
+    const errors = await validate(dtoInstance);
 
     if (errors.length > 0) {
-      res.status(400).json({ message: 'Validation failed', errors });
+      res.status(StatusCodes.BAD_REQUEST).send(errors);
       return;
     }
 
-    req.body = dtoObject;
     next();
   }
 }

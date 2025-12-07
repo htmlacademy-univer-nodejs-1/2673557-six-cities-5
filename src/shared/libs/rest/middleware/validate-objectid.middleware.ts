@@ -1,21 +1,23 @@
-import { injectable } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { isValidObjectId } from 'mongoose';
-import { Middleware } from './middleware.interface';
+import { Middleware } from './middleware.interface.js';
+import { StatusCodes } from 'http-status-codes';
+import { Types } from 'mongoose';
+import { HttpError } from '../errors/index.js';
 
-@injectable()
 export class ValidateObjectIdMiddleware implements Middleware {
-  constructor(private readonly paramName: string) {}
+  constructor(private param: string) {}
 
-  public execute(req: Request, res: Response, next: NextFunction): void {
-    const value = req.params[this.paramName];
-    console.log('ValidateObjectIdMiddleware', value);
+  public execute({ params }: Request, _res: Response, next: NextFunction): void {
+    const objectId = params[this.param];
 
-    if (!isValidObjectId(value)) {
-      res.status(400).json({ message: `Invalid ${this.paramName}: ${value}` });
-      return;
+    if (Types.ObjectId.isValid(objectId)) {
+      return next();
     }
 
-    next();
+    throw new HttpError(
+      StatusCodes.BAD_REQUEST,
+      `${objectId} is invalid ObjectID`,
+      'ValidateObjectIdMiddleware'
+    );
   }
 }
