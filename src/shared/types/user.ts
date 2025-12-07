@@ -1,9 +1,12 @@
-import { UserType } from './user-type.type.js';
+export enum UserType {
+  Standard = 'обычный',
+  Pro = 'pro',
+}
 
 export type User = {
   name: string;
   email: string;
-  avatarPicPath?: string;
+  avatar?: string;
   password: string;
   type: UserType;
-}
+};

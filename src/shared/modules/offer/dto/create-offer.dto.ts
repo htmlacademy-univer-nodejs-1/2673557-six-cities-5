@@ -1,4 +1,4 @@
-import { Amenity, City, Coordinates, HousingType } from '../../../../types/offer';
+import { Amenity, City, Coordinates, HousingType } from '../../../types/offer.js';
 
 export class CreateOfferDto {
   public title!: string;

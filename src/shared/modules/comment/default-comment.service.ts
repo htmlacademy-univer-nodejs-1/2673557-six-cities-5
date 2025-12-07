@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Component } from '../../../types/component.enum.js';
+import { Component } from '../../../shared/types/component.enum.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { Logger } from 'pino';
 import { OfferService } from '../offer/offer.service.interface.js';

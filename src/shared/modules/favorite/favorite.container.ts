@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { Component } from '../../../types';
+import { Component } from '../../../shared/types';
 import { DefaultFavoriteService } from './default-favorite.service.js';
 import { FavoriteEntity, FavoriteModel } from './favorite.entity.js';
 import { FavoriteService } from './favorite.service.interface.js';

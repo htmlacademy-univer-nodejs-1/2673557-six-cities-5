@@ -1,6 +1,6 @@
+import express, { Express } from 'express';
 import { injectable, inject } from 'inversify';
 import { Config, RestSchema } from '../shared/libs/config/index.js';
-import express, { Express, Request, Response, NextFunction } from 'express';
 import { Logger } from '../shared/libs/logger/index.js';
 import { Component } from '../shared/types/component.enum.js';
 import { DatabaseClient } from '../shared/libs/database-client/database-client.interface.js';
@@ -8,6 +8,25 @@ import { getMongoURI } from '../shared/helpers/index.js';
 import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
 import { FavoriteController } from '../shared/modules/favorite/favorite.controller.js';
 import { CommentController } from '../shared/modules/comment/comment.controller.js';
+import { UserModel } from '../shared/modules/user/index.js';
+import { UserType } from '../shared/types/index.js';
+
+
+export let ANONYMOUS_USER_ID: string;
+
+export async function ensureAnonymousUser() {
+  let user = await UserModel.findOne({ name: 'Anonymous' });
+  if (!user) {
+    user = await UserModel.create({
+      name: 'Anonymous',
+      email: 'anon@example.com',
+      password: 'anon',
+      type: UserType.Standard,
+      avatar: '',
+    });
+  }
+  ANONYMOUS_USER_ID = user._id.toString();
+}
 
 @injectable()
 export class Application {
@@ -50,7 +69,7 @@ export class Application {
   }
 
   private async _initExceptionFilters() {
-    this.server.use((err: Error, req: Request, res: Response, next: NextFunction) => this.appExceptionFilter.catch(err, req, res, next));
+    this.server.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => this.appExceptionFilter.catch(err, req, res, next));
   }
 
   private async _initServer() {
@@ -64,6 +83,9 @@ export class Application {
     this.logger.info('Init database…');
     await this._initDb();
     this.logger.info('Init database completed');
+
+    await ensureAnonymousUser();
+    this.logger.info(`Anonymous user initialized with ID: ${ANONYMOUS_USER_ID}`);
 
     this.logger.info('Init app-level middleware');
     await this._initMiddleware();

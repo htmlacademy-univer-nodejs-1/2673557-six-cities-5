@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { Logger } from 'pino';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { UserService } from './user.service.interface.js';
-import { Component } from '../../../types/component.enum.js';
+import { Component } from '../../../shared/types/component.enum.js';
 import { UserEntity } from './user.entity.js';
 
 export interface UserAuthService {

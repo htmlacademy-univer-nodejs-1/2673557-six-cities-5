@@ -1,7 +1,7 @@
 import { Container } from 'inversify';
 import { DefaultUserService } from './default-user.service.js';
 import { UserService } from './user.service.interface.js';
-import { Component } from '../../../types/index.js';
+import { Component } from '../../../shared/types/index.js';
 import { types } from '@typegoose/typegoose';
 import { UserEntity, UserModel } from './index.js';
 import { Controller } from '../../libs/rest/index.js';

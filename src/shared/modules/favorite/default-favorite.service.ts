@@ -4,7 +4,7 @@ import { Logger } from 'pino';
 import { OfferEntity } from '../offer';
 import { FavoriteEntity } from './favorite.entity.js';
 import { FavoriteService } from './favorite.service.interface.js';
-import { Component } from '../../../types/component.enum.js';
+import { Component } from '../../../shared/types/component.enum.js';
 
 @injectable()
 export class DefaultFavoriteService implements FavoriteService {

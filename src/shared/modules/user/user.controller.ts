@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Response } from 'express';
 import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { Component } from '../../../types/index.js';
+import { Component } from '../../../shared/types/index.js';
 import { CreateUserRequest } from './create-user-request.type.js';
 import { Config } from 'convict';
 import { StatusCodes } from 'http-status-codes';
