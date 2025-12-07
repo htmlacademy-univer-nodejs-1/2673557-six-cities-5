@@ -60,7 +60,7 @@ export class CommentController extends BaseController {
     const dto: CreateCommentDto = {
       ...body,
       offerId: params.offerId,
-      userId: req.user!.id,
+      userId: req.user?.id,
     };
 
     const result = await this.commentService.create(dto);

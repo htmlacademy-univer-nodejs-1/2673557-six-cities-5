@@ -62,13 +62,13 @@ export class Application {
 
   private async _initMiddleware() {
     this.server.use(express.json());
-    
+
     // Create middleware wrapper for ParseTokenMiddleware
     const parseTokenMiddleware = new ParseTokenMiddleware(this.jwtService);
     this.server.use((req, res, next) => {
       parseTokenMiddleware.execute(req, res, next).catch(next);
     });
-    
+
     this.server.use('/static', express.static(this.config.get('UPLOAD_DIRECTORY')));
   }
 

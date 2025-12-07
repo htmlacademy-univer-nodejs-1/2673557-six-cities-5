@@ -59,7 +59,7 @@ export class OfferController extends BaseController {
   public async index(req: Request, res: Response): Promise<void> {
     const offers = await this.offerService.find();
     const userId = req.user?.id || ANONYMOUS_USER_ID;
-    
+
     const offersWithFavorite = await Promise.all(
       offers.map(async (offer) => {
         const isFavorite = await this.favoriteService.isFavorite(userId, offer._id.toString());
@@ -69,7 +69,7 @@ export class OfferController extends BaseController {
         };
       })
     );
-    
+
     this.ok(res, fillDTO(OfferRdo, offersWithFavorite));
   }
 
@@ -94,12 +94,12 @@ export class OfferController extends BaseController {
     const offer = await this.offerService.findById(req.params.offerId);
     const userId = req.user?.id || ANONYMOUS_USER_ID;
     const isFavorite = await this.favoriteService.isFavorite(userId, req.params.offerId);
-    
+
     const offerWithFavorite = {
       ...offer?.toObject(),
       isFavorite,
     };
-    
+
     this.ok(res, fillDTO(OfferRdo, offerWithFavorite));
   }
 
@@ -117,7 +117,7 @@ export class OfferController extends BaseController {
     const city = req.params.city as City;
     const offers = await this.offerService.findPremiumByCity(city);
     const userId = req.user?.id || ANONYMOUS_USER_ID;
-    
+
     const offersWithFavorite = await Promise.all(
       offers.map(async (offer) => {
         const isFavorite = await this.favoriteService.isFavorite(userId, offer._id.toString());
@@ -127,7 +127,7 @@ export class OfferController extends BaseController {
         };
       })
     );
-    
+
     this.ok(res, fillDTO(OfferRdo, offersWithFavorite));
   }
 }

@@ -1,24 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { Middleware } from './middleware.interface.js';
-import { JwtService } from '../auth/index.js';
+import { JwtService } from '../../auth/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { HttpError } from '../errors/index.js';
 
 declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        name: string;
-        type: string;
-      };
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace Express {
+        interface Request {
+            user?: {
+                id: string;
+                email: string;
+                name: string;
+                type: string;
+            };
+        }
     }
-  }
 }
 
 export class ParseTokenMiddleware implements Middleware {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) { }
 
   public async execute(req: Request, _res: Response, next: NextFunction): Promise<void> {
     const authorizationHeader = req.headers.authorization?.split(' ')[1];

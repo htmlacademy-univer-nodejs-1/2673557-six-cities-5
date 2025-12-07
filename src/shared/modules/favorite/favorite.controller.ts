@@ -14,38 +14,44 @@ export class FavoriteController extends BaseController {
   ) {
     super(logger);
 
-    this.addRoute({ 
-      path: '/:offerId/favorite', 
-      method: HttpMethod.Post, 
+    this.addRoute({
+      path: '/:offerId/favorite',
+      method: HttpMethod.Post,
       handler: this.add,
       middlewares: [new AuthMiddleware()]
     });
-    this.addRoute({ 
-      path: '/:offerId/favorite', 
-      method: HttpMethod.Delete, 
+    this.addRoute({
+      path: '/:offerId/favorite',
+      method: HttpMethod.Delete,
       handler: this.remove,
       middlewares: [new AuthMiddleware()]
     });
-    this.addRoute({ 
-      path: '/', 
-      method: HttpMethod.Get, 
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
       handler: this.index,
       middlewares: [new AuthMiddleware()]
     });
   }
 
   public async add({ params, user }: Request, res: Response): Promise<void> {
-    await this.favoriteService.addToFavorites(user!.id, params.offerId);
-    this.noContent(res);
+    if (user) {
+      await this.favoriteService.addToFavorites(user.id, params.offerId);
+      this.noContent(res);
+    }
   }
 
   public async remove({ params, user }: Request, res: Response): Promise<void> {
-    await this.favoriteService.removeFromFavorites(user!.id, params.offerId);
-    this.noContent(res);
+    if (user) {
+      await this.favoriteService.removeFromFavorites(user.id, params.offerId);
+      this.noContent(res);
+    }
   }
 
   public async index({ user }: Request, res: Response): Promise<void> {
-    const favorites = await this.favoriteService.findFavoritesByUser(user!.id);
-    this.ok(res, favorites);
+    if (user) {
+      const favorites = await this.favoriteService.findFavoritesByUser(user.id);
+      this.ok(res, favorites);
+    }
   }
 }
