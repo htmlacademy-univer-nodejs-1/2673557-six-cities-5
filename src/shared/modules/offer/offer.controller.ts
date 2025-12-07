@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { City, Component } from '../../../types/index.js';
+import { City, Component } from '../../../shared/types/index.js';
 import { OfferService } from './offer.service.interface.js';
 import { CreateOfferDto, OfferRdo } from './index.js';
 import { fillDTO } from '../../helpers/index.js';

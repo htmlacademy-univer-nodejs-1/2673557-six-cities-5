@@ -1,6 +1,6 @@
 import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { UserEntity } from '../user/index.js';
-import { City, HousingType, Amenity, Coordinates } from '../../../types/index.js';
+import { City, HousingType, Amenity, Coordinates } from '../../../shared/types/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}

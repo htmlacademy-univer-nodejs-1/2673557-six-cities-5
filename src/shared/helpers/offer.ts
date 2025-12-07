@@ -1,54 +1,58 @@
-import { Amenities, City, HousingType, Offer, UserType } from '../types/index.js';
+import { Amenity, City, Coordinates, HousingType, Offer } from '../types/offer.js';
+import { User, UserType } from '../types/user.js';
 
-export function ParseOffer(data: string): Offer {
+export function createOffer(offerData: string): Offer {
   const [
     title,
     description,
-    postDate,
+    publicationDate,
     city,
     previewImage,
-    imagesString,
+    images,
     isPremium,
-    isFavorite,
     rating,
     type,
-    roomsCnt,
-    peopleCnt,
+    bedrooms,
+    maxAdults,
     price,
     amenities,
     authorName,
     authorEmail,
     authorAvatar,
-    authorType,
-    commentsCnt,
+    authorPassword,
+    authorIsPro,
     latitude,
     longitude
-  ] = data.replace('\r\n', '').split('\t');
+  ] = offerData.replace('\n', '').split('\t');
+
+  const author: User = {
+    name: authorName,
+    email: authorEmail,
+    avatar: authorAvatar,
+    password: authorPassword,
+    type: authorIsPro === 'true' ? UserType.Pro : UserType.Standard
+  };
+
+  const location: Coordinates = {
+    latitude: parseFloat(latitude),
+    longitude: parseFloat(longitude)
+  };
 
   return {
     title,
     description,
-    postDate: new Date(postDate),
+    publicationDate: new Date(publicationDate),
     city: city as City,
     previewImage,
-    images: imagesString.split(';'),
+    images: images.split(';'),
     isPremium: isPremium === 'true',
-    isFavorite: isFavorite === 'true',
     rating: parseFloat(rating),
     type: type as HousingType,
-    roomsCnt: parseInt(roomsCnt, 10),
-    peopleCnt: parseInt(peopleCnt, 10),
+    bedrooms: parseInt(bedrooms, 10),
+    maxAdults: parseInt(maxAdults, 10),
     price: parseInt(price, 10),
-    amenities: amenities.trim().split(';') as Amenities[],
-    author: {
-      name: authorName,
-      email: authorEmail,
-      avatarPicPath: authorAvatar,
-      password: '',
-      type: authorType as UserType
-    },
-    commentsCnt: parseInt(commentsCnt, 10),
-    latitude: parseFloat(latitude),
-    longitude: parseFloat(longitude)
+    amenities: amenities.split(';') as Amenity[],
+    author,
+    location
   };
 }

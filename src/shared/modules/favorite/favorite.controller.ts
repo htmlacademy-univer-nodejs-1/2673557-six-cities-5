@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { BaseController, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { Component } from '../../../types/index.js';
+import { Component } from '../../../shared/types/index.js';
 import { FavoriteService } from './favorite.service.interface.js';
 
 @injectable()

@@ -1,83 +1,94 @@
 import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
-import { Location, MockServerData } from '../../types/index.js';
-
 import {
-  generateRandomBoolean,
   generateRandomValue,
   getRandomItem,
-  getRandomItems
-} from '../../helpers/common.js';
-import {
-  MIN_RATING,
-  MAX_RATING,
-  MIN_ROOMSCNT,
-  MAX_ROOMSCNT,
-  MIN_PEOPLECNT,
-  MAX_PEOPLECNT,
-  MIN_PRICE,
-  MAX_PRICE,
-  MIN_COMMENTS,
-  MAX_COMMENTS,
-  FIRST_WEEK_DAY,
-  LAST_WEEK_DAY,
-  USER_TYPES
-} from '../../const/offer.const.js';
+  getRandomItems,
+  getRandomBoolean,
+} from '../../helpers/index.js';
+import { City, HousingType } from '../../types/offer.js';
+import { MockData } from '../../types/mock-server-data-types.js';
+
+const MIN_PRICE = 50;
+const MAX_PRICE = 5000;
+const MIN_RATING = 1;
+const MAX_RATING = 5;
+const MIN_BEDROOMS = 1;
+const MAX_BEDROOMS = 5;
+const MIN_ADULTS = 1;
+const MAX_ADULTS = 10;
+const FIRST_WEEK_DAY = 1;
+const LAST_WEEK_DAY = 7;
+
+const CITY_COORDINATES: Record<City, { latitude: number; longitude: number }> =
+  {
+    Paris: { latitude: 48.8566, longitude: 2.3522 },
+    Cologne: { latitude: 50.9375, longitude: 6.9603 },
+    Brussels: { latitude: 50.8503, longitude: 4.3517 },
+    Amsterdam: { latitude: 52.3676, longitude: 4.9041 },
+    Hamburg: { latitude: 53.5511, longitude: 9.9937 },
+    Dusseldorf: { latitude: 51.2277, longitude: 6.7735 },
+  };
 
 export class TSVOfferGenerator implements OfferGenerator {
-  constructor(private readonly mockData: MockServerData) {}
+  constructor(private readonly mockData: MockData) {}
 
   public generate(): string {
-    const title = getRandomItem<string>(this.mockData.titles).toString();
-    const description = getRandomItem<string>(this.mockData.descriptions).toString();
-    const city = getRandomItem<string>(this.mockData.cities);
-    const previewImage = getRandomItem<string>(this.mockData.images).toString();
-    const imageCount = generateRandomValue(3, 6);
-    const images = Array.from(
-      { length: imageCount },
-      () => getRandomItem<string>(this.mockData.images)
-    ).join(';');
-    const isPremium = generateRandomBoolean().toString();
-    const isFavorite = generateRandomBoolean().toString();
-    const rating = generateRandomValue(MIN_RATING, MAX_RATING, 1).toString();
-    const type = getRandomItem(this.mockData.types).toString();
-    const roomsCnt = generateRandomValue(MIN_ROOMSCNT, MAX_ROOMSCNT).toString();
-    const peopleCnt = generateRandomValue(MIN_PEOPLECNT, MAX_PEOPLECNT).toString();
-    const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
-    const amenities = getRandomItems(this.mockData.amenities).join(';');
-    const authorName = getRandomItem<string>(this.mockData.userNames);
-    const authorEmail = getRandomItem<string>(this.mockData.emails).toString();
-    const authorAvatar = getRandomItem<string>(this.mockData.images).toString();
-    const authorType = getRandomItem([...USER_TYPES]).toString();
-    const commentsCnt = generateRandomValue(MIN_COMMENTS, MAX_COMMENTS).toString();
-    const coordinates = getRandomItem<Location>(this.mockData.locations);
+    const city = getRandomItem<City>(this.mockData.cities);
+    const coordinates = CITY_COORDINATES[city];
 
-    const postDate = dayjs()
+    const title = getRandomItem<string>(this.mockData.titles);
+    const description = getRandomItem<string>(this.mockData.descriptions);
+    const publicationDate = dayjs()
       .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
       .toISOString();
+
+    const previewImage = getRandomItem<string>(this.mockData.images);
+    const images = getRandomItems<string>(this.mockData.images)
+      .slice(0, 6)
+      .join(';');
+
+    const isPremium = getRandomBoolean();
+    const rating = generateRandomValue(MIN_RATING, MAX_RATING, 1).toString();
+
+    const type = getRandomItem<HousingType>(this.mockData.types);
+    const bedrooms = generateRandomValue(
+      MIN_BEDROOMS,
+      MAX_BEDROOMS,
+      0
+    ).toString();
+    const maxAdults = generateRandomValue(MIN_ADULTS, MAX_ADULTS, 0).toString();
+    const price = generateRandomValue(MIN_PRICE, MAX_PRICE, 0).toString();
+
+    const amenities = getRandomItems<string>(this.mockData.goods).join(';');
+
+    const authorName = getRandomItem<string>(this.mockData.names);
+    const authorEmail = getRandomItem<string>(this.mockData.emails);
+    const authorAvatar = getRandomItem<string>(this.mockData.avatarPaths);
+    const authorPassword = getRandomItem<string>(this.mockData.passwords);
+    const authorIsPro = getRandomBoolean().toString();
 
     return [
       title,
       description,
-      postDate,
+      publicationDate,
       city,
       previewImage,
       images,
       isPremium,
-      isFavorite,
       rating,
       type,
-      roomsCnt,
-      peopleCnt,
+      bedrooms,
+      maxAdults,
       price,
       amenities,
       authorName,
       authorEmail,
       authorAvatar,
-      authorType,
-      commentsCnt,
+      authorPassword,
+      authorIsPro,
       coordinates.latitude,
-      coordinates.longitude
+      coordinates.longitude,
     ].join('\t');
   }
 }
